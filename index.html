@@ -1,300 +1,1062 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <link rel="shortcut icon"
-    href="https://static-index-4gtuqm3bfa95c963-1304825656.tcloudbaseapp.com/official-website/favicon.svg"
-    mce_href="https://static-index-4gtuqm3bfa95c963-1304825656.tcloudbaseapp.com/official-website/favicon.svg"
-    type="image/x-icon" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
-  <title>欢迎使用微信云托管</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>极梦AI API Gateway - 多模型统一接口，按量计费</title>
+  <meta name="description" content="极梦AI API Gateway 提供 OpenAI、DeepSeek、Anthropic 等多模型统一接口，按量计费，低延迟高可用，让AI能力接入更简单。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0b;
+      --bg-secondary: #111113;
+      --bg-tertiary: #18181b;
+      --border-color: #27272a;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-light: rgba(99, 102, 241, 0.1);
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Droid Sans", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Droid Sans Fallback", "Microsoft YaHei", sans-serif;
-    }
-
-    .title-logo {
-      width: 80px;
-      height: 80px;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    @media screen and (min-width:1200px) {
-      body .container {
-        margin-top: 160px;
-        margin-bottom: 272px;
-      }
-    }
-
-    @media screen and (max-width:1919px) {
-      body .container {
-        margin-top: 76px;
-        margin-bottom: 128px;
-      }
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 11, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-content {
       display: flex;
-      flex-direction: column;
       align-items: center;
+      justify-content: space-between;
+      height: 64px;
     }
 
-    .count-button {
-      width: 320px;
-      height: 40px;
-      box-sizing: border-box;
-      margin: 16px 8px;
-      font-weight: 500;
-      font-size: 17px;
-      color: #FFFFFF;
-      letter-spacing: 1px;
-      text-align: center;
-      border-radius: 4px;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-primary);
+      text-decoration: none;
     }
 
-    .count-number {
-      align-self: flex-start;
-      opacity: 0.9;
-      font-weight: 500;
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
       font-size: 14px;
-      color: #000000;
+      font-weight: 500;
+      transition: color 0.2s;
     }
 
-    .count-reset {
-      color: #576b95;
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
       cursor: pointer;
-      margin-left: auto;
+      transition: all 0.2s;
+      border: none;
     }
 
-    .count-text {
-      width: 320px;
-      height: 40px;
-      padding: 0 12px;
-      margin: 0 auto;
-      line-height: 40px;
-      text-align: left;
-      display: flex;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
-      opacity: 0.9;
-      box-sizing: border-box;
-      font-weight: 400;
-      font-size: 14px;
-      color: #000000;
+    .btn-primary {
+      background: var(--text-primary);
+      color: var(--bg-primary);
     }
 
-    .quote {
-      font-size: 12px;
+    .btn-primary:hover {
+      background: #f4f4f5;
     }
 
-    .qrcode {
-      height: 144px;
-      width: 144px;
-      display: block;
-      margin: 0 auto;
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
     }
 
-    .title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      width: 320px;
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--text-muted);
     }
 
-    .title-text {
-      width: 320px;
-      height: 48px;
-      text-align: center;
-      margin-top: 16px;
-      font-size: 32px;
-      opacity: 0.9;
-      font-weight: 500;
-      font-size: 32px;
-      color: #000000;
-      letter-spacing: 0;
-      line-height: 48px;
+    .btn-accent {
+      background: var(--accent);
+      color: white;
     }
 
-    .counter-container {
-      margin-top: 48px;
+    .btn-accent:hover {
+      background: var(--accent-hover);
     }
 
-    .hr {
+    /* Hero Section */
+    .hero {
+      padding: 160px 0 120px;
       text-align: center;
       position: relative;
-      z-index: 2;
-      height: 20px;
-      line-height: 20px;
+      overflow: hidden;
     }
 
-    .hr::after {
-      position: absolute;
+    .hero::before {
       content: '';
-      top: 10px;
-      left: 60px;
-      width: 200px;
-      border-bottom: 1px solid rgba(0, 0, 0, .1);
-      z-index: -1;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    .hr small {
-      display: inline-block;
-      background-color: white;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--accent-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-hover);
+      margin-bottom: 24px;
     }
 
-    .hr-text {
-      display: inline-block;
-      height: 20px;
-      font-weight: 400;
-      font-size: 14px;
-      color: rgba(0, 0, 0, 0.55);
-      letter-spacing: 0;
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 80px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .stat-item {
       text-align: center;
-      z-index: 2;
-      background-color: white;
-      padding: 0 8px;
-      line-height: 20px;
     }
 
-    .link-button {
-      width: 154px;
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .section-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 600px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--text-muted);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
       height: 48px;
-      box-sizing: border-box;
-      font-weight: 400;
-      font-size: 14px;
-      color: rgba(0, 0, 0, 0.90);
-      letter-spacing: 0;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.03);
-      border-radius: 6px;
+      background: var(--accent-light);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
     }
 
-    .card {
-      margin-top: 16px;
-      width: 320px;
-      height: 200px;
-      box-sizing: border-box;
-      border: 1px solid rgba(0, 0, 0, 0.10);
-      border-radius: 5.71px;
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    /* Pricing Section */
+    .pricing {
+      padding: 100px 0;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .pricing-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
       position: relative;
     }
 
-    .card-text {
-      text-align: center;
-      font-weight: 400;
+    .pricing-card.popular {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, var(--bg-secondary) 100%);
+    }
+
+    .pricing-card.popular::before {
+      content: '最受欢迎';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    .pricing-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .pricing-desc {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.55);
-      letter-spacing: 0;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .pricing-price {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pricing-price span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin: 24px 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .pricing-card .btn {
+      width: 100%;
+    }
+
+    /* API Preview Section */
+    .api-preview {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .api-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .api-info h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+
+    .api-info p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    .api-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .api-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .api-feature-item .check {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .api-feature-item span {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    .code-block {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #eab308; }
+    .code-dot.green { background: #22c55e; }
+
+    .code-title {
+      margin-left: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .code-content {
+      padding: 20px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .code-content .comment { color: #6b7280; }
+    .code-content .keyword { color: #c084fc; }
+    .code-content .string { color: #34d399; }
+    .code-content .property { color: #60a5fa; }
+    .code-content .value { color: #fbbf24; }
+
+    /* FAQ Section */
+    .faq {
+      padding: 100px 0;
+    }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .faq-question:hover {
+      color: var(--accent);
+    }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 200px;
+    }
+
+    .faq-answer p {
+      padding-bottom: 24px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      padding: 64px 0 32px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 16px;
+      max-width: 280px;
+    }
+
+    .footer-links h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-color);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-social a {
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-social a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .api-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .hero h1 {
+        font-size: 40px;
+      }
+      
+      .hero p {
+        font-size: 16px;
+      }
+      
+      .hero-stats {
+        flex-direction: column;
+        gap: 24px;
+      }
+      
+      .section-title {
+        font-size: 32px;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="title">
-      <img class="title-logo"
-        src="https://static-index-4gtuqm3bfa95c963-1304825656.tcloudbaseapp.com/official-website/favicon.svg" />
-      <div style="display: inline; margin-bottom: 48px" class="title-text">欢迎使用微信云托管</div>
-    </div>
-    <div style="text-align: center; display: flex; flex-direction: column; align-items: center; margin: 0">
-      <span class="count-text">
-        <span style="margin-right: 16px;">当前计数:</span>
-        <span class="count-number"></span>
-        <span class="count-reset" onclick="set('clear')">清零</span>
-      </span>
-      <a class="btn btn-success btn-lg count-button" style="background: #07c160; border: 0"
-        onclick="set('inc')">计数+1</a>
-      <div class="card" style="width: 320px; margin-bottom: 48px;">
-        <div class="card-body">
-          <img class="qrcode middle"
-            src="https://qcloudimg.tencent-cloud.cn/raw/89b46988d3cd73d8a56e76a1b82bb377.png" />
-          <small class="card-text" style="display: flex; justify-content: center; margin-top: 8px">扫码加入微信云托管用户群</small>
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
         </div>
+        极梦AI
+      </a>
+      <div class="nav-links">
+        <a href="#features">功能特性</a>
+        <a href="#pricing">定价</a>
+        <a href="#api">API文档</a>
+        <a href="#faq">常见问题</a>
       </div>
-      <div>
-        <div class="hr">
-          <span class="hr-text">快速入门</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-top: 16px;">
-          <a class="btn btn-light btn-lg link-button" style="border: 0; box-shadow: none; margin-right: 12px;"
-            href="https://developers.weixin.qq.com/miniprogram/dev/wxcloudrun/src/basic/intro.html" target="_blank"
-            rel="noopener noreferrer">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
-              height="24px" viewBox="0 0 24 24">
-              <title>icons_outline_warrant copy</title>
-              <g id="icons_outline_warrant-copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                <g id="0.&#x56FE;&#x6807;/&#x7EBF;&#x578B;/icons_outlined_copy">
-                  <rect id="Rectangle" x="0" y="0" width="20" height="20"></rect>
-                  <path
-                    d="M13.9979043,2 L20,8 L20,21.0013542 C20,21.5542301 19.5541613,22 19.0041915,22 L5.99580851,22 C5.44892021,22 5,21.552891 5,21.0013542 L5,2.99864581 C5,2.44576991 5.44583866,2 5.99580851,2 L13.9979043,2 Z M12.399,3.2 L6.2,3.2 L6.2,20.8 L18.8,20.8 L18.8,9.6 L14,9.6 C13.1163444,9.6 12.4,8.8836556 12.4,8 L12.399,3.2 Z M14.2,14.4 L14.2,15.6 L7.8,15.6 L7.8,14.4 L14.2,14.4 Z M17.2,12 L17.2,13.2 L7.8,13.2 L7.8,12 L17.2,12 Z M13.599,3.299 L13.6,8 C13.6,8.2209139 13.7790861,8.4 14,8.4 L18.703,8.4 L13.599,3.299 Z"
-                    id="Combined-Shape" fill-opacity="0.9" fill="#000000"></path>
-                </g>
-              </g>
-            </svg>
-            <span style="margin-left: 4px">开发者文档</span></a>
-          <a class="btn btn-light btn-lg link-button" style="border: 0; box-shadow: none;"
-            href="https://developers.weixin.qq.com/community/business/course/00068c2c0106c0667f5b01d015b80d"
-            target="_blank" rel="noopener noreferrer">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
-              height="24px" viewBox="0 0 24 24">
-              <title>icons_outlined_play</title>
-              <g id="&#x573A;&#x666F;&#x5316;&#x90E8;&#x7F72;" stroke="none" stroke-width="1" fill="none"
-                fill-rule="evenodd">
-                <g id="icons_outlined_play">
-                  <rect id="Rectangle-664" x="0" y="0" width="20" height="20"></rect>
-                  <path
-                    d="M12,20.8 C16.8601058,20.8 20.8,16.8601058 20.8,12 C20.8,7.1398942 16.8601058,3.2 12,3.2 C7.1398942,3.2 3.2,7.1398942 3.2,12 C3.2,16.8601058 7.1398942,20.8 12,20.8 Z M12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 C17.5228475,2 22,6.4771525 22,12 C22,17.5228475 17.5228475,22 12,22 Z M10.7,14.8349028 L15.2358445,12 L10.7,9.16509717 L10.7,14.8349028 Z M10.2649995,7.47812467 L16.8216014,11.5760008 C17.0557696,11.722356 17.1269562,12.0308312 16.980601,12.2649995 C16.9403607,12.329384 16.8859859,12.3837588 16.8216014,12.4239992 L10.2649995,16.5218753 C10.0308312,16.6682305 9.72235601,16.5970439 9.57600085,16.3628756 C9.52633472,16.2834098 9.5,16.191586 9.5,16.0978762 L9.5,7.90212382 C9.5,7.62598145 9.72385763,7.40212382 10,7.40212382 C10.0937099,7.40212382 10.1855337,7.42845854 10.2649995,7.47812467 Z"
-                    id="Oval-78" fill-opacity="0.9" fill="#000000"></path>
-                </g>
-              </g>
-            </svg>
-            <span style="margin-left: 4px">视频教程</span></a>
-        </div>
+      <div class="nav-buttons">
+        <a href="#" class="btn btn-secondary">登录</a>
+        <a href="#" class="btn btn-primary">免费开始</a>
       </div>
     </div>
-  </div>
-</body>
-<script src="https://mat1.gtimg.com/www/asset/lib/jquery/jquery/jquery-1.11.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script>
-  init();
-  function init() {
-    $.ajax("/api/count", {
-      method: "get",
-    }).done(function (res) {
-      if (res && res.data !== undefined) {
-        $(".count-number").html(res.data);
-      }
-    });
-  }
-  function set(action) {
-    $.ajax("/api/count", {
-      method: "POST",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify({
-        action: action,
-      }),
-    }).done(function (res) {
-      if (res && res.data !== undefined) {
-        $(".count-number").html(res.data);
-      }
-    });
-  }
-</script>
+  </nav>
 
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">支持 OpenAI / DeepSeek / Anthropic</div>
+      <h1>一个接口，<span>调用所有主流AI模型</span></h1>
+      <p>极梦AI API Gateway 为开发者提供统一、高效、可靠的 AI 能力接入方案。无需管理多个账号，一个密钥即可调用所有主流大模型。</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-accent" style="padding: 14px 28px; font-size: 16px;">
+          免费开始使用 →
+        </a>
+        <a href="#pricing" class="btn btn-secondary" style="padding: 14px 28px; font-size: 16px;">
+          查看定价
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">服务可用性</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">&lt;100ms</div>
+          <div class="stat-label">平均响应延迟</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">10K+</div>
+          <div class="stat-label">活跃开发者</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100M+</div>
+          <div class="stat-label">日均API调用</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">核心优势</span>
+        <h2 class="section-title">为什么选择极梦AI？</h2>
+        <p class="section-desc">我们专注于提供最简单、最可靠的AI能力接入体验</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>统一接口</h3>
+          <p>告别繁琐的多平台配置。使用统一的 API 格式，一行代码即可在 OpenAI、DeepSeek、Anthropic 等模型之间无缝切换。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>按量计费</h3>
+          <p>无需月费、无需订阅。真正按实际使用量计费，成本透明可控，让您专注于产品开发而非成本控制。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>低延迟高吞吐</h3>
+          <p>全球多节点部署，智能路由优化。平均响应延迟低于 100ms，轻松应对高并发场景。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>企业级可靠性</h3>
+          <p>99.9% SLA 保障，自动故障转移，多区域备份。您的应用始终可用，数据安全无忧。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">简单定价</span>
+        <h2 class="section-title">按需付费，无隐藏费用</h2>
+        <p class="section-desc">从免费试用开始，随着业务增长灵活扩展</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-name">免费层</div>
+          <div class="pricing-desc">适合个人开发者和测试</div>
+          <div class="pricing-price">¥0<span>/月</span></div>
+          <ul class="pricing-features">
+            <li>100 元额度（用完即止）</li>
+            <li>支持所有基础模型</li>
+            <li>100 RPM 请求限制</li>
+            <li>社区支持</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">免费开始</a>
+        </div>
+        <div class="pricing-card popular">
+          <div class="pricing-name">Pro</div>
+          <div class="pricing-desc">适合成长中的项目</div>
+          <div class="pricing-price">¥99<span>/月起</span></div>
+          <ul class="pricing-features">
+            <li>包含 ¥100 额度</li>
+            <li>超额按量计费 8 折</li>
+            <li>1000 RPM 请求限制</li>
+            <li>优先客户支持</li>
+            <li>使用分析面板</li>
+          </ul>
+          <a href="#" class="btn btn-accent">立即升级</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-name">Enterprise</div>
+          <div class="pricing-desc">适合企业级应用</div>
+          <div class="pricing-price">定制<span>方案</span></div>
+          <ul class="pricing-features">
+            <li>无限用量</li>
+            <li>专属客户经理</li>
+            <li>99.99% SLA 保障</li>
+            <li>私有模型部署</li>
+            <li>自定义计费周期</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">联系销售</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Preview Section -->
+  <section class="api-preview" id="api">
+    <div class="container">
+      <div class="api-content">
+        <div class="api-info">
+          <span class="section-label">开发者友好</span>
+          <h2>一行代码，轻松接入</h2>
+          <p>极简的 API 设计，兼容 OpenAI 官方接口格式，几乎零成本迁移。</p>
+          <div class="api-features">
+            <div class="api-feature-item">
+              <span class="check">✓</span>
+              <span>兼容 OpenAI SDK，无需修改代码</span>
+            </div>
+            <div class="api-feature-item">
+              <span class="check">✓</span>
+              <span>支持流式输出（Streaming）</span>
+            </div>
+            <div class="api-feature-item">
+              <span class="check">✓</span>
+              <span>统一错误处理和重试机制</span>
+            </div>
+            <div class="api-feature-item">
+              <span class="check">✓</span>
+              <span>完整的用量统计和计费明细</span>
+            </div>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-title">Terminal</span>
+          </div>
+          <div class="code-content">
+<span class="comment"># 设置 API Key</span>
+<span class="keyword">export</span> OPENAI_API_KEY=<span class="string">"your-jimeng-key"</span>
+<span class="keyword">export</span> OPENAI_BASE_URL=<span class="string">"https://api.jimeng.ai/v1"</span>
+
+<span class="comment"># 调用 GPT-4o</span>
+curl https://api.jimeng.ai/v1/chat/completions \
+  <span class="property">-H</span> <span class="string">"Authorization: Bearer $OPENAI_API_KEY"</span> \
+  <span class="property">-H</span> <span class="string">"Content-Type: application/json"</span> \
+  <span class="property">-d</span> <span class="string">'{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</span>
+
+<span class="comment"># 切换到 DeepSeek（只需改 model）</span>
+curl https://api.jimeng.ai/v1/chat/completions \
+  <span class="property">-H</span> <span class="string">"Authorization: Bearer $OPENAI_API_KEY"</span> \
+  <span class="property">-H</span> <span class="string">"Content-Type: application/json"</span> \
+  <span class="property">-d</span> <span class="string">'{
+    "model": "deepseek-chat",
+    "messages": [{"role": "user", "content": "你好！"}]
+  }'</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">常见问题</span>
+        <h2 class="section-title">有疑问？这里有答案</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item active">
+          <button class="faq-question">
+            极梦AI和其他AI聚合平台有什么区别？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>我们专注于开发者体验，提供真正统一的接口规范。支持 OpenAI、DeepSeek、Anthropic 等主流模型，一套代码可以无缝切换任意模型，无需重复配置。同时我们保持透明的定价策略，无隐藏费用。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            如何获取 API Key？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>注册账户后，在仪表板的「API Keys」页面即可创建新的密钥。每个账户可以创建多个密钥，支持设置密钥权限和有效期。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            计费是如何计算的？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>按照实际 token 消耗量计费，不同模型价格不同。我们会实时显示账户余额和用量明细，费用透明可查。详细价格请查看定价页面。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            是否支持企业发票？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>是的，Pro 及以上套餐均支持开具增值税普通发票或专用发票。企业用户可联系客服开通对公转账、月结等付款方式。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            遇到问题如何获得帮助？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>免费用户可通过文档和社区论坛自助解决问题。Pro 用户享有邮件优先支持，响应时间不超过 24 小时。企业用户配备专属客户经理。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            极梦AI
+          </a>
+          <p>为开发者打造的 AI 能力接入平台，让智能触手可及。</p>
+        </div>
+        <div class="footer-links">
+          <h4>产品</h4>
+          <ul>
+            <li><a href="#">功能特性</a></li>
+            <li><a href="#">定价</a></li>
+            <li><a href="#">API 文档</a></li>
+            <li><a href="#">更新日志</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>资源</h4>
+          <ul>
+            <li><a href="#">开发者文档</a></li>
+            <li><a href="#">SDK 下载</a></li>
+            <li><a href="#">API 状态</a></li>
+            <li><a href="#">最佳实践</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>公司</h4>
+          <ul>
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">博客</a></li>
+            <li><a href="#">联系我们</a></li>
+            <li><a href="#">服务条款</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 极梦AI. 保留所有权利。</span>
+        <div class="footer-social">
+          <a href="#" title="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="#" title="Twitter">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const isActive = item.classList.contains('active');
+        
+        // Close all items
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        
+        // Open clicked item if it wasn't active
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
 </html>
