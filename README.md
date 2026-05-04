@@ -2,6 +2,10 @@
 
 🚀 基于 Vercel Serverless Functions 的 AI API 聚合网关
 
+## 一键部署
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/jimeng999/jm&redirect=ai-api-gateway&branch=ai-api-gateway)
+
 ## 功能特性
 
 - **多模型聚合** - 统一接入 OpenAI、Anthropic、DeepSeek、Google Gemini
