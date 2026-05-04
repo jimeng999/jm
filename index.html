@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI API Gateway - 智能路由聚合网关</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 80px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .price-card.featured {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        
+        .price-card h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: #a0a0a0;
+        }
+        
+        .price-features {
+            list-style: none;
+            text-align: left;
+            margin: 30px 0;
+        }
+        
+        .price-features li {
+            padding: 10px 0;
+            color: #a0a0a0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .price-features li::before {
+            content: "✓ ";
+            color: #667eea;
+            margin-right: 10px;
+        }
+        
+        /* API Section */
+        .api-section {
+            padding: 80px 0;
+        }
+        
+        .api-demo {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+        
+        .api-demo h3 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            background: #0d0d1a;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .code-block .keyword { color: #c678dd; }
+        .code-block .string { color: #98c379; }
+        .code-block .comment { color: #5c6370; }
+        
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        footer p {
+            color: #666;
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        /* Status Badge */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #98c379;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>AI API Gateway</h1>
+            <p>智能路由聚合网关 - 一站式接入 OpenAI、Anthropic、DeepSeek、Gemini 等顶级 AI 模型</p>
+            
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>API 服务运行中</span>
+            </div>
+            
+            <div class="cta-buttons">
+                <a href="https://ai-api-gateway.onrender.com/docs" class="btn btn-primary">API 文档</a>
+                <a href="https://github.com/jimeng999/jm/tree/main/ai-api-gateway" class="btn btn-secondary">GitHub</a>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section class="features">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>多模型聚合</h3>
+                    <p>统一接入 OpenAI GPT-4、Anthropic Claude、DeepSeek、Google Gemini 等顶级模型，一个 API Key 调用所有服务</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>智能路由</h3>
+                    <p>根据任务复杂度自动选择最优模型，简单任务用低成本模型，复杂任务用高性能模型，节省 70% 成本</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>双重计费</h3>
+                    <p>支持 Token 计费（抽成模式）和按结果计费（高毛利 SaaS），毛利率最高可达 97%</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>垂直 API</h3>
+                    <p>预置内容创作、代码审查、数据分析等专业能力，直接变现无需二次开发</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>安全认证</h3>
+                    <p>JWT Token 认证、请求限流、IP 白名单，全方位保护您的 API 安全</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>用量统计</h3>
+                    <p>实时监控 API 调用量、Token 消耗、费用明细，数据驱动决策优化</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Pricing Section -->
+        <section class="pricing">
+            <div class="container">
+                <h2 class="section-title">定价方案</h2>
+                <div class="pricing-grid">
+                    <div class="price-card">
+                        <h3>开发者</h3>
+                        <div class="price">免费</div>
+                        <ul class="price-features">
+                            <li>1,000 API 调用/月</li>
+                            <li>基础模型访问</li>
+                            <li>社区支持</li>
+                            <li>单 API Key</li>
+                        </ul>
+                        <a href="#" class="btn btn-secondary">立即开始</a>
+                    </div>
+                    
+                    <div class="price-card featured">
+                        <h3>专业版</h3>
+                        <div class="price">$49<span>/月</span></div>
+                        <ul class="price-features">
+                            <li>50,000 API 调用/月</li>
+                            <li>全部模型访问</li>
+                            <li>智能路由优化</li>
+                            <li>5 个 API Keys</li>
+                            <li>优先技术支持</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">升级专业版</a>
+                    </div>
+                    
+                    <div class="price-card">
+                        <h3>企业版</h3>
+                        <div class="price">定制</div>
+                        <ul class="price-features">
+                            <li>无限 API 调用</li>
+                            <li>私有模型部署</li>
+                            <li>专属 SLA 保障</li>
+                            <li>无限 API Keys</li>
+                            <li>7x24 技术支持</li>
+                        </ul>
+                        <a href="#" class="btn btn-secondary">联系销售</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- API Section -->
+        <section class="api-section">
+            <h2 class="section-title">快速开始</h2>
+            <div class="api-demo">
+                <h3>Chat Completion 示例</h3>
+                <div class="code-block">
+                    <code>
+<span class="comment"># 安装 SDK</span>
+pip install openai
+
+<span class="comment"># 调用 API</span>
+<span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI
+
+client = OpenAI(
+    api_key=<span class="string">"your-api-key"</span>,
+    base_url=<span class="string">"https://ai-api-gateway.onrender.com/v1"</span>
+)
+
+response = client.chat.completions.create(
+    model=<span class="string">"gpt-4"</span>,
+    messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="string">"Hello!"</span>}]
+)
+<span class="keyword">print</span>(response.choices[0].message.content)
+                    </code>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 AI API Gateway. Built with ❤️ | <a href="https://github.com/jimeng999/jm">GitHub</a></p>
+        </footer>
+    </div>
+</body>
+</html>
