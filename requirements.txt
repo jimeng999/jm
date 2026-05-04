@@ -1,0 +1,11 @@
+# AI API Gateway - Vercel Serverless 版本依赖
+# 适用于 Vercel Python Runtime
+
+# HTTP客户端（必需）
+httpx==0.26.0
+
+# JWT认证（可选，已有简单备选方案）
+python-jose[cryptography]==3.3.0
+
+# 等待异步操作
+tenacity==8.2.3
