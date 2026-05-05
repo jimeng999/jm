@@ -1,27 +1,8 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-dist/
-build/
-
-# Vercel
-.vercel/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
+*.pyc
+*.pyo
 .env
-.env.local
-.env.*.local
+data/
+logs/
+*.log
+.git/

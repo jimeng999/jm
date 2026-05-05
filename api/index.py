@@ -1,32 +1,16 @@
 """
-Vercel Serverless Function 入口
-AI API Gateway - 智能路由聚合网关
+Vercel Serverless API Handler
+AI API Gateway - BYOK 版本
 """
 import os
 import sys
-from datetime import datetime
-from typing import Dict, Any, Optional
+from pathlib import Path
 
-# 添加app目录到路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# 添加项目根目录到 Python 路径
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.main import app
-from app.utils.auth import verify_api_key, decode_access_token
+# 导入 FastAPI 应用
+from main import app
 
-# Vercel Python runtime 需要这个 handler
-def handler(request, context=None):
-    """
-    Vercel Serverless Function handler
-    
-    Args:
-        request: Vercel 请求对象
-        context: Vercel 上下文（可选）
-    
-    Returns:
-        Response对象
-    """
-    return app(request, context)
-
-
-# 为了兼容不同的调用方式，也导出 ASGI 应用
-app_handler = app
+# Vercel Serverless Handler
+handler = app
