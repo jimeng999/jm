@@ -1,413 +1,1132 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI API Gateway - 智能路由聚合网关</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding: 100px 0 80px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-        
-        .hero p {
-            font-size: 1.3rem;
-            color: #a0a0a0;
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid #667eea;
-            color: #667eea;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        /* Features Section */
-        .features {
-            padding: 80px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 60px;
-            color: white;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(102, 126, 234, 0.5);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card p {
-            color: #a0a0a0;
-            line-height: 1.6;
-        }
-        
-        /* Pricing Section */
-        .pricing {
-            padding: 80px 0;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .price-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .price-card.featured {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            border-color: #667eea;
-            transform: scale(1.05);
-        }
-        
-        .price-card h3 {
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 10px;
-        }
-        
-        .price {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #667eea;
-            margin: 20px 0;
-        }
-        
-        .price span {
-            font-size: 1rem;
-            color: #a0a0a0;
-        }
-        
-        .price-features {
-            list-style: none;
-            text-align: left;
-            margin: 30px 0;
-        }
-        
-        .price-features li {
-            padding: 10px 0;
-            color: #a0a0a0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .price-features li::before {
-            content: "✓ ";
-            color: #667eea;
-            margin-right: 10px;
-        }
-        
-        /* API Section */
-        .api-section {
-            padding: 80px 0;
-        }
-        
-        .api-demo {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 40px;
-            font-family: 'Monaco', 'Menlo', monospace;
-        }
-        
-        .api-demo h3 {
-            color: white;
-            margin-bottom: 20px;
-        }
-        
-        .code-block {
-            background: #0d0d1a;
-            border-radius: 10px;
-            padding: 20px;
-            overflow-x: auto;
-        }
-        
-        .code-block code {
-            color: #a0a0a0;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        
-        .code-block .keyword { color: #c678dd; }
-        .code-block .string { color: #98c379; }
-        .code-block .comment { color: #5c6370; }
-        
-        /* Footer */
-        footer {
-            padding: 40px 0;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        footer p {
-            color: #666;
-        }
-        
-        footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        /* Status Badge */
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #98c379;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>极梦AI API Gateway - 用自己的Key，零中间差价</title>
+  <meta name="description" content="极梦AI API Gateway 支持自带 API Key (BYOK)，零差价调用 OpenAI/DeepSeek/Anthropic 模型。每日5次免费体验，Pro会员享智能路由。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0b;
+      --bg-secondary: #111113;
+      --bg-tertiary: #18181b;
+      --border-color: #27272a;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-light: rgba(99, 102, 241, 0.1);
+      --success: #22c55e;
+      --success-light: rgba(34, 197, 94, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 11, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+    }
+
+    .btn-primary:hover {
+      background: #f4f4f5;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--text-muted);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 160px 0 120px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--accent-light);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-hover);
+      margin-bottom: 24px;
+    }
+
+    .hero-badge .check {
+      color: var(--success);
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--success), #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 80px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* BYOK Section */
+    .byok-section {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .byok-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .byok-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .byok-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .byok-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-light);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+    }
+
+    .byok-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .byok-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .byok-card .price {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--success);
+      margin-top: 16px;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 100px 0;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .section-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 600px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--text-muted);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    /* Pricing Section */
+    .pricing {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .pricing-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .pricing-card.popular {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, var(--bg-primary) 100%);
+    }
+
+    .pricing-card.popular::before {
+      content: '最受欢迎';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    .pricing-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .pricing-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .pricing-price {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .pricing-price span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin: 24px 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .pricing-features li.muted {
+      color: var(--text-muted);
+    }
+
+    .pricing-features li.muted::before {
+      content: '−';
+      color: var(--text-muted);
+    }
+
+    .pricing-card .btn {
+      width: 100%;
+    }
+
+    /* API Preview Section */
+    .api-preview {
+      padding: 100px 0;
+    }
+
+    .api-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .api-info h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+
+    .api-info p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    .api-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .api-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .api-feature-item .check {
+      width: 20px;
+      height: 20px;
+      background: var(--success-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--success);
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .api-feature-item span {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    .code-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #eab308; }
+    .code-dot.green { background: #22c55e; }
+
+    .code-title {
+      margin-left: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .code-content {
+      padding: 20px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .code-content .comment { color: #6b7280; }
+    .code-content .keyword { color: #c084fc; }
+    .code-content .string { color: #34d399; }
+    .code-content .property { color: #60a5fa; }
+    .code-content .value { color: #fbbf24; }
+
+    /* FAQ Section */
+    .faq {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .faq-question:hover {
+      color: var(--accent);
+    }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 200px;
+    }
+
+    .faq-answer p {
+      padding-bottom: 24px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      padding: 64px 0 32px;
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 16px;
+      max-width: 280px;
+    }
+
+    .footer-links h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-color);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-social a {
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-social a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .features-grid, .byok-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .api-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .hero h1 {
+        font-size: 36px;
+      }
+      
+      .hero p {
+        font-size: 16px;
+      }
+      
+      .hero-stats {
+        flex-direction: column;
+        gap: 24px;
+      }
+      
+      .section-title {
+        font-size: 32px;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>AI API Gateway</h1>
-            <p>智能路由聚合网关 - 一站式接入 OpenAI、Anthropic、DeepSeek、Gemini 等顶级 AI 模型</p>
-            
-            <div class="status">
-                <span class="status-dot"></span>
-                <span>API 服务运行中</span>
-            </div>
-            
-            <div class="cta-buttons">
-                <a href="https://ai-api-gateway.onrender.com/docs" class="btn btn-primary">API 文档</a>
-                <a href="https://github.com/jimeng999/jm/tree/main/ai-api-gateway" class="btn btn-secondary">GitHub</a>
-            </div>
-        </section>
-        
-        <!-- Features Section -->
-        <section class="features">
-            <h2 class="section-title">核心功能</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
-                    <h3>多模型聚合</h3>
-                    <p>统一接入 OpenAI GPT-4、Anthropic Claude、DeepSeek、Google Gemini 等顶级模型，一个 API Key 调用所有服务</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🧠</div>
-                    <h3>智能路由</h3>
-                    <p>根据任务复杂度自动选择最优模型，简单任务用低成本模型，复杂任务用高性能模型，节省 70% 成本</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3>双重计费</h3>
-                    <p>支持 Token 计费（抽成模式）和按结果计费（高毛利 SaaS），毛利率最高可达 97%</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>垂直 API</h3>
-                    <p>预置内容创作、代码审查、数据分析等专业能力，直接变现无需二次开发</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>安全认证</h3>
-                    <p>JWT Token 认证、请求限流、IP 白名单，全方位保护您的 API 安全</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>用量统计</h3>
-                    <p>实时监控 API 调用量、Token 消耗、费用明细，数据驱动决策优化</p>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Pricing Section -->
-        <section class="pricing">
-            <div class="container">
-                <h2 class="section-title">定价方案</h2>
-                <div class="pricing-grid">
-                    <div class="price-card">
-                        <h3>开发者</h3>
-                        <div class="price">免费</div>
-                        <ul class="price-features">
-                            <li>1,000 API 调用/月</li>
-                            <li>基础模型访问</li>
-                            <li>社区支持</li>
-                            <li>单 API Key</li>
-                        </ul>
-                        <a href="#" class="btn btn-secondary">立即开始</a>
-                    </div>
-                    
-                    <div class="price-card featured">
-                        <h3>专业版</h3>
-                        <div class="price">$49<span>/月</span></div>
-                        <ul class="price-features">
-                            <li>50,000 API 调用/月</li>
-                            <li>全部模型访问</li>
-                            <li>智能路由优化</li>
-                            <li>5 个 API Keys</li>
-                            <li>优先技术支持</li>
-                        </ul>
-                        <a href="#" class="btn btn-primary">升级专业版</a>
-                    </div>
-                    
-                    <div class="price-card">
-                        <h3>企业版</h3>
-                        <div class="price">定制</div>
-                        <ul class="price-features">
-                            <li>无限 API 调用</li>
-                            <li>私有模型部署</li>
-                            <li>专属 SLA 保障</li>
-                            <li>无限 API Keys</li>
-                            <li>7x24 技术支持</li>
-                        </ul>
-                        <a href="#" class="btn btn-secondary">联系销售</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- API Section -->
-        <section class="api-section">
-            <h2 class="section-title">快速开始</h2>
-            <div class="api-demo">
-                <h3>Chat Completion 示例</h3>
-                <div class="code-block">
-                    <code>
-<span class="comment"># 安装 SDK</span>
-pip install openai
-
-<span class="comment"># 调用 API</span>
-<span class="keyword">from</span> openai <span class="keyword">import</span> OpenAI
-
-client = OpenAI(
-    api_key=<span class="string">"your-api-key"</span>,
-    base_url=<span class="string">"https://ai-api-gateway.onrender.com/v1"</span>
-)
-
-response = client.chat.completions.create(
-    model=<span class="string">"gpt-4"</span>,
-    messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="string">"Hello!"</span>}]
-)
-<span class="keyword">print</span>(response.choices[0].message.content)
-                    </code>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Footer -->
-        <footer>
-            <p>&copy; 2024 AI API Gateway. Built with ❤️ | <a href="https://github.com/jimeng999/jm">GitHub</a></p>
-        </footer>
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        极梦AI
+      </a>
+      <div class="nav-links">
+        <a href="#byok">BYOK 模式</a>
+        <a href="#features">功能特性</a>
+        <a href="#pricing">定价</a>
+        <a href="#faq">常见问题</a>
+      </div>
+      <div class="nav-buttons">
+        <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-secondary">登录</a>
+        <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-primary">免费开始</a>
+      </div>
     </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="check">✓</span>
+        支持 OpenAI / DeepSeek / Anthropic / Gemini
+      </div>
+      <h1>用自己的 <span>API Key</span>，<br><span class="highlight">零中间差价</span></h1>
+      <p>极梦AI API Gateway 首创 BYOK 模式。您携带自己的 API Key，我们提供统一的接口、免费额度和智能工具。告别差价时代，按用量付费更透明。</p>
+      <div class="hero-buttons">
+        <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-accent" style="padding: 14px 28px; font-size: 16px;">
+          免费开始使用 →
+        </a>
+        <a href="#pricing" class="btn btn-secondary" style="padding: 14px 28px; font-size: 16px;">
+          查看定价
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">0%</div>
+          <div class="stat-label">BYOK 零差价</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">5次</div>
+          <div class="stat-label">每日免费体验</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">30%</div>
+          <div class="stat-label">平台 Key 加价</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">服务可用性</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BYOK Section -->
+  <section class="byok-section" id="byok">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">BYOK 模式</span>
+        <h2 class="section-title">灵活的选择，更低的成本</h2>
+        <p class="section-desc">无论您是否有自己的 API Key，都能找到最优方案</p>
+      </div>
+      <div class="byok-grid">
+        <div class="byok-card">
+          <div class="byok-icon">🔑</div>
+          <h3>自带 Key (BYOK)</h3>
+          <p>使用您自己的 OpenAI、DeepSeek 等 API Key，我们提供统一的接口和工具层服务。</p>
+          <div class="price">¥0 差价</div>
+        </div>
+        <div class="byok-card">
+          <div class="byok-icon">🎁</div>
+          <h3>免费体验</h3>
+          <p>无需注册 Key，每日 5 次 DeepSeek 免费调用，极低成本试水 AI 能力。</p>
+          <div class="price">¥0 / 天</div>
+        </div>
+        <div class="byok-card">
+          <div class="byok-icon">🏢</div>
+          <h3>平台 Key 兜底</h3>
+          <p>当您没有配置自己的 Key 时，使用平台 Key 调用，仅加价 30% 作为服务费。</p>
+          <div class="price">+30% 服务费</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">核心优势</span>
+        <h2 class="section-title">为什么选择极梦AI BYOK？</h2>
+        <p class="section-desc">创新的商业模式，更低的使用成本</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💎</div>
+          <h3>零差价透明</h3>
+          <p>使用自己的 Key，完全按官方价格计费。我们只收取工具层服务费，告别API中转的高额差价。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>安全加密存储</h3>
+          <p>您的 API Key 采用 AES 加密存储，我们无法访问明文数据。安全可靠，完全可控。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>统一接口</h3>
+          <p>告别繁琐的多平台配置。使用统一 API 格式，一行代码即可在 OpenAI、DeepSeek、Claude 等模型间无缝切换。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>智能用量分析</h3>
+          <p>Pro 用户尊享详细的用量统计和分析面板，了解 Token 消耗趋势，优化使用成本。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">简单定价</span>
+        <h2 class="section-title">按需选择，无隐藏费用</h2>
+        <p class="section-desc">BYOK 模式：用自己的 Key 零差价，订阅解锁高级功能</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-name">免费层</div>
+          <div class="pricing-desc">适合个人开发者和尝鲜</div>
+          <div class="pricing-price">¥0<span>/月</span></div>
+          <ul class="pricing-features">
+            <li>BYOK 无限调用（用自己的 Key）</li>
+            <li>每日 5 次 DeepSeek 免费体验</li>
+            <li>支持 OpenAI/DeepSeek/Claude/Gemini</li>
+            <li class="muted">无智能路由</li>
+            <li class="muted">无用量分析</li>
+          </ul>
+          <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-secondary">免费开始</a>
+        </div>
+        <div class="pricing-card popular">
+          <div class="pricing-name">Pro</div>
+          <div class="pricing-desc">适合成长中的项目</div>
+          <div class="pricing-price">¥49<span>/月</span></div>
+          <ul class="pricing-features">
+            <li>BYOK 无限调用（用自己的 Key）</li>
+            <li>每日 10 次平台 Key 免费体验</li>
+            <li>智能模型路由（自动选最优模型）</li>
+            <li>详细用量分析面板</li>
+            <li>优先客户支持</li>
+          </ul>
+          <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-accent">立即升级</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-name">Enterprise</div>
+          <div class="pricing-desc">适合企业级应用</div>
+          <div class="pricing-price">定制<span>方案</span></div>
+          <ul class="pricing-features">
+            <li>Pro 全部功能</li>
+            <li>专属客户经理</li>
+            <li>99.99% SLA 保障</li>
+            <li>私有模型部署</li>
+            <li>自定义计费周期</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">联系销售</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Preview Section -->
+  <section class="api-preview" id="api">
+    <div class="container">
+      <div class="api-content">
+        <div class="api-info">
+          <span class="section-label">开发者友好</span>
+          <h2>设置 BYOK Key，三步搞定</h2>
+          <p>简单三步，开始使用极梦AI BYOK 模式。</p>
+          <div class="api-features">
+            <div class="api-feature-item">
+              <span class="check">1</span>
+              <span>注册账户，获取您的 API Key</span>
+            </div>
+            <div class="api-feature-item">
+              <span class="check">2</span>
+              <span>设置您的 OpenAI/DeepSeek 等 Key</span>
+            </div>
+            <div class="api-feature-item">
+              <span class="check">3</span>
+              <span>开始调用，零差价使用 AI 能力</span>
+            </div>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span>
+            <span class="code-dot yellow"></span>
+            <span class="code-dot green"></span>
+            <span class="code-title">Terminal</span>
+          </div>
+          <div class="code-content">
+<span class="comment"># 1. 设置您的 BYOK Key</span>
+<span class="keyword">curl</span> https://api.jimeng.ai/v1/user/api-keys \
+  <span class="property">-X POST</span> \
+  <span class="property">-H</span> <span class="string">"Authorization: Bearer $JIMENG_KEY"</span> \
+  <span class="property">-d</span> <span class="string">'{
+    "provider": "openai",
+    "api_key": "sk-your-openai-key-here"
+  }'</span>
+
+<span class="comment"># 2. 开始调用（零差价！）</span>
+curl https://api.jimeng.ai/v1/chat/completions \
+  <span class="property">-H</span> <span class="string">"Authorization: Bearer $JIMENG_KEY"</span> \
+  <span class="property">-d</span> <span class="string">'{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</span>
+
+<span class="comment"># 3. 查看已设置的 Keys（脱敏显示）</span>
+curl https://api.jimeng.ai/v1/user/api-keys \
+  <span class="property">-H</span> <span class="string">"Authorization: Bearer $JIMENG_KEY"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">常见问题</span>
+        <h2 class="section-title">有疑问？这里有答案</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item active">
+          <button class="faq-question">
+            BYOK 模式是什么意思？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>BYOK = Bring Your Own Key（携带你自己的 Key）。您使用自己的 OpenAI/DeepSeek API Key 调用 AI 模型，我们不收取任何差价费用。只在您没有配置 Key、需要使用平台 Key 时，才收取 30% 的服务费。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            我的 API Key 安全吗？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>您的 API Key 采用 AES 加密存储，我们无法访问明文数据。加密密钥与您的账户绑定，只有在调用 AI 服务时才会临时解密使用。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            如果我不设置自己的 Key 怎么办？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>您可以享受每日 5 次 DeepSeek 免费体验。如果需要更多调用，可以设置自己的 Key（零差价），或者使用平台 Key（加价 30%）。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            免费层和 Pro 的区别是什么？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>两者都支持 BYOK 无限调用。主要区别：Pro 用户享有每日 10 次平台 Key 免费体验、智能模型路由、详细用量分析面板和优先客户支持。</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            计费是如何计算的？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>BYOK 模式下，您只需支付模型提供商的费用（OpenAI/DeepSeek 等官方价格）。如果您使用平台 Key，我们会加收 30% 作为服务费。订阅费用与 API 调用费用分开计算。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            极梦AI
+          </a>
+          <p>为开发者打造的 AI 能力接入平台，让智能触手可及。</p>
+        </div>
+        <div class="footer-links">
+          <h4>产品</h4>
+          <ul>
+            <li><a href="#byok">BYOK 模式</a></li>
+            <li><a href="#pricing">定价</a></li>
+            <li><a href="#api">API 文档</a></li>
+            <li><a href="#faq">常见问题</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>资源</h4>
+          <ul>
+            <li><a href="#">开发者文档</a></li>
+            <li><a href="#">SDK 下载</a></li>
+            <li><a href="#">API 状态</a></li>
+            <li><a href="#">最佳实践</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>公司</h4>
+          <ul>
+            <li><a href="#">关于我们</a></li>
+            <li><a href="#">博客</a></li>
+            <li><a href="#">加入团队</a></li>
+            <li><a href="#">联系我们</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2024 极梦AI. 保留所有权利。</div>
+        <div class="footer-social">
+          <a href="#">Twitter</a>
+          <a href="#">GitHub</a>
+          <a href="#">Discord</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ Toggle
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const faqItem = button.parentElement;
+        faqItem.classList.toggle('active');
+      });
+    });
+  </script>
 </body>
 </html>
