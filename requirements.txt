@@ -1,11 +1,14 @@
-# AI API Gateway - Vercel Serverless 版本依赖
-# 适用于 Vercel Python Runtime
-
-# HTTP客户端（必需）
+# AI API Gateway 依赖
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
 httpx==0.26.0
-
-# JWT认证（可选，已有简单备选方案）
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
 python-jose[cryptography]==3.3.0
-
-# 等待异步操作
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+aiofiles==23.2.1
+json5==0.9.14
 tenacity==8.2.3
+cryptography==41.0.7

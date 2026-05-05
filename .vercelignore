@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.git/
+.vscode/
+*.md
+!README.md
+data/
+logs/
+landing-page/
+marketing/
+vertical-apis/
+Dockerfile
+docker-compose.yml
+deploy.sh
+fly.toml
+railway.toml
+.env.example
