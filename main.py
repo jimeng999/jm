@@ -1,6 +1,6 @@
 """
-AI API Gateway - 主入口文件 (BYOK 版本)
-智能路由聚合网关系统 - 支持 Bring Your Own Key 模式
+AI API Gateway - 主入口文件 (BYOK + x402 版本)
+智能路由聚合网关系统 - 支持 Bring Your Own Key 模式 + x402 按请求付费
 """
 import os
 import sys
@@ -9,9 +9,10 @@ from pathlib import Path
 # 添加项目根目录到 Python 路径
 sys.path.insert(0, str(Path(__file__).parent))
 
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI, HTTPException, Request, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 
@@ -30,24 +31,33 @@ from routers import chat, content, code, data, billing, admin
 app = FastAPI(
     title="AI API Gateway",
     description="""
-## 智能路由聚合网关 - BYOK 模式
+## 智能路由聚合网关 - BYOK + x402 模式
 
 通过 Bring Your Own Key (BYOK) 模式，让用户使用自己的 API Key，平台赚取工具层费用。
+支持 x402 协议，实现按请求用 USDC 实时结算。
 
 ### 核心功能
 
 1. **BYOK 模式** - 用户自带 API Key，零中间差价
 2. **平台 Key 兜底** - 无 Key 用户使用平台 Key，按量加价 30%
-3. **免费体验** - 每日 5 次 DeepSeek 免费体验
-4. **智能路由** - Pro 用户享有多模型智能路由
+3. **x402 按次付费** - 用 USDC 稳定币在 Base 链上按请求实时结算
+4. **免费体验** - 每日 5 次 DeepSeek 免费体验
+5. **智能路由** - Pro 用户享有多模型智能路由
+
+### 认证优先级
+
+1. 有 API Key → 走 BYOK
+2. 无 API Key + x402 启用 → 返回 HTTP 402
+3. 有 PAYMENT-SIGNATURE → 走 x402 验证 → 返回数据
 
 ### 商业模式
 
 - **BYOK 模式**：用户用自己的 Key，平台不赚差价
 - **平台 Key**：无 BYOK 时使用平台 Key，加价 30%
+- **x402 按次付费**：无需注册，用 USDC 按请求实时结算
 - **Pro 订阅**：¥49/月，智能路由 + 用量分析
     """,
-    version="2.0.0",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json"
@@ -60,7 +70,107 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["PAYMENT-REQUIRED", "PAYMENT-RESPONSE"],
 )
+
+
+# ==================== x402 中间件 ====================
+
+@app.middleware("http")
+async def x402_middleware(request: Request, call_next):
+    """
+    x402 支付协议中间件
+    
+    认证优先级：
+    1. 有 Authorization header → 走 BYOK（放行，由路由层验证）
+    2. 非 API 端点（/docs, /health 等）→ 直接放行
+    3. x402 未启用 → 直接放行（走原有逻辑）
+    4. 有 PAYMENT-SIGNATURE header → 验证支付
+    5. 无任何认证 → 返回 HTTP 402 + PAYMENT-REQUIRED
+    """
+    from services.x402 import x402_service
+    
+    # 非 API 路径直接放行
+    path = request.url.path
+    non_api_paths = ["/", "/health", "/docs", "/redoc", "/openapi.json", "/landing"]
+    if path in non_api_paths or path.startswith("/v1/auth"):
+        return await call_next(request)
+    
+    # 有 Authorization header → 走 BYOK，放行
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        return await call_next(request)
+    
+    # x402 未启用 → 放行（走原有逻辑，会返回 401）
+    if not x402_service.is_enabled():
+        return await call_next(request)
+    
+    # 检查 PAYMENT-SIGNATURE
+    payment_signature = request.headers.get("PAYMENT-SIGNATURE")
+    
+    if not payment_signature:
+        # 无支付签名 → 返回 402 + PAYMENT-REQUIRED
+        # 尝试从请求中获取 model（仅用于定价）
+        model = request.headers.get("X-Model", "gpt-4o-mini")
+        response_body, headers = x402_service.build_payment_required_response(
+            resource=path,
+            model=model
+        )
+        return JSONResponse(
+            status_code=402,
+            content=response_body,
+            headers=headers
+        )
+    
+    # 有支付签名 → 验证
+    model = request.headers.get("X-Model", "gpt-4o-mini")
+    is_valid, verification = await x402_service.verify_payment(
+        payment_signature=payment_signature,
+        resource=path,
+        model=model
+    )
+    
+    if is_valid:
+        # 验证通过 → 放行，附加 x402 用户信息到 request state
+        request.state.x402_user = {
+            "user_id": f"x402_anonymous",
+            "plan": "x402",
+            "auth_method": "x402",
+            "verification": verification
+        }
+        # 添加 PAYMENT-RESPONSE header
+        response = await call_next(request)
+        payment_response = x402_service.build_payment_response_header(verification)
+        response.headers["PAYMENT-RESPONSE"] = payment_response
+        return response
+    else:
+        # 验证失败 → 返回 402
+        response_body, headers = x402_service.build_payment_required_response(
+            resource=path,
+            model=model
+        )
+        return JSONResponse(
+            status_code=402,
+            content=response_body,
+            headers=headers
+        )
+
+
+# ==================== 辅助函数 ====================
+
+async def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(
+        HTTPBearer(auto_error=False)
+    )
+) -> dict:
+    """从 Header 获取当前用户（可选，用于管理自己的 BYOK Keys）"""
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="请提供有效的认证信息"
+        )
+    from utils.auth import get_current_user
+    return await get_current_user(credentials)
 
 
 # ==================== 请求/响应模型 ====================
@@ -290,20 +400,6 @@ async def get_free_trial_status(user: dict = Depends(get_current_user_optional))
     )
 
 
-# ==================== 辅助函数 ====================
-
-def get_current_user_optional(user_id: str = None) -> dict:
-    """从 Header 获取当前用户（可选，用于管理自己的 BYOK Keys）"""
-    from utils.auth import get_current_user
-    try:
-        return get_current_user(user_id)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="请提供有效的认证信息"
-        )
-
-
 # ==================== 注册业务路由 ====================
 
 app.include_router(chat.router)
@@ -320,10 +416,11 @@ app.include_router(admin.router)
 async def health_check():
     """系统健康检查"""
     from datetime import datetime
+    from services.x402 import x402_service
     
     return HealthResponse(
         status="healthy",
-        version="2.0.0",
+        version="2.1.0",
         timestamp=datetime.now().isoformat()
     )
 
@@ -331,12 +428,49 @@ async def health_check():
 @app.get("/", tags=["系统"])
 async def root():
     """根路径"""
+    from services.x402 import x402_service
+    
     return {
         "name": "AI API Gateway",
-        "version": "2.0.0",
-        "mode": "BYOK",
+        "version": "2.1.0",
+        "mode": "BYOK + x402",
         "docs": "/docs",
-        "description": "智能路由聚合网关 - 支持自带 API Key"
+        "x402_enabled": x402_service.is_enabled(),
+        "description": "智能路由聚合网关 - 支持自带 API Key 和 x402 按次付费"
+    }
+
+
+# ==================== Landing Page ====================
+
+@app.get("/landing", tags=["系统"], response_class=HTMLResponse)
+async def landing_page():
+    """Landing Page"""
+    landing_path = Path(__file__).parent / "landing-page" / "index.html"
+    if landing_path.exists():
+        return FileResponse(landing_path, media_type="text/html")
+    return HTMLResponse("<h1>Landing page not found</h1>", status_code=404)
+
+
+# ==================== x402 端点定价查询 ====================
+
+@app.get("/v1/x402/pricing", tags=["x402"])
+async def get_x402_pricing():
+    """获取 x402 按请求付费定价表"""
+    from services.x402 import x402_service
+    from config import model_config
+    
+    if not x402_service.is_enabled():
+        return {
+            "enabled": False,
+            "message": "x402 支付协议未启用。设置 X402_ENABLED=true 开启。"
+        }
+    
+    return {
+        "enabled": True,
+        "network": x402_service.network,
+        "asset": x402_service.usdc_contract,
+        "payTo": x402_service.wallet_address,
+        "pricing": model_config.X402_PRICING
     }
 
 
@@ -378,10 +512,16 @@ async def general_exception_handler(request, exc):
 @app.on_event("startup")
 async def startup_event():
     """应用启动事件"""
+    from services.x402 import x402_service
+    
     logger.info("=" * 50)
-    logger.info("AI API Gateway (BYOK Mode) 启动中...")
+    logger.info("AI API Gateway (BYOK + x402 Mode) 启动中...")
     logger.info(f"调试模式: {settings.debug}")
     logger.info(f"数据目录: {settings.data_dir}")
+    logger.info(f"x402 支付协议: {'启用' if x402_service.is_enabled() else '禁用'}")
+    if x402_service.is_enabled():
+        logger.info(f"x402 收款钱包: {x402_service.wallet_address}")
+        logger.info(f"x402 网络: {x402_service.network}")
     logger.info("=" * 50)
 
 
