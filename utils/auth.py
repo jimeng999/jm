@@ -1,12 +1,13 @@
 """
 认证与授权工具模块
+支持 BYOK + x402 支付协议
 """
 import hashlib
 import secrets
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, Request, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 
@@ -189,3 +190,55 @@ async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] 
 def verify_admin(api_key: str) -> bool:
     """验证管理员权限"""
     return api_key == settings.admin_api_key
+
+
+async def get_x402_user(request: Request) -> Optional[dict]:
+    """
+    从 x402 支付签名中获取用户身份
+    
+    认证优先级：
+    1. 有 API Key → 走 BYOK
+    2. 无 API Key + x402 启用 → 检查 PAYMENT-SIGNATURE header
+    3. 有 PAYMENT-SIGNATURE → 走 x402 验证
+    4. 无 PAYMENT-SIGNATURE → 返回 None（由路由层返回 402）
+    
+    返回: 验证通过返回 x402 用户 dict，否则返回 None
+    """
+    from services.x402 import x402_service
+    
+    if not x402_service.is_enabled():
+        return None
+    
+    payment_signature = request.headers.get("PAYMENT-SIGNATURE")
+    if not payment_signature:
+        return None
+    
+    # 确定请求的资源路径和模型
+    resource = request.url.path
+    
+    # 尝试从请求体获取模型名称（用于定价）
+    model = "gpt-4o-mini"  # 默认模型
+    try:
+        # 读取 body（需要特殊处理，因为 request body 只能读一次）
+        # 这里用 query param 或 header 传递 model
+        model = request.headers.get("X-Model", "gpt-4o-mini")
+    except Exception:
+        pass
+    
+    # 验证支付
+    is_valid, verification = await x402_service.verify_payment(
+        payment_signature=payment_signature,
+        resource=resource,
+        model=model
+    )
+    
+    if is_valid:
+        return {
+            "user_id": f"x402_{verification.get('payer', 'anonymous')}",
+            "plan": "x402",
+            "auth_method": "x402",
+            "model": model,
+            "verification": verification
+        }
+    
+    return None
