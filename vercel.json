@@ -7,11 +7,9 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/landing",
       "dest": "api/index.py"
-    }
-  ],
-  "env": {
-    "PYTHONUNBUFFERED": "1"
-  }
-}
+    },
+    {
+      "src": "/v1/(.*)",
+      "dest": "
