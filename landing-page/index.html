@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>极梦AI API Gateway - 用自己的Key，零中间差价</title>
-  <meta name="description" content="极梦AI API Gateway 支持自带 API Key (BYOK)，零差价调用 OpenAI/DeepSeek/Anthropic 模型。每日5次免费体验，Pro会员享智能路由。">
+  <title>极梦AI API Gateway - 用自己的Key，零中间差价 | x402按次付费</title>
+  <meta name="description" content="极梦AI API Gateway 支持自带 API Key (BYOK)，零差价调用 OpenAI/DeepSeek/Anthropic 模型。新增 x402 协议，用 USDC 按次付费。每日5次免费体验，Pro会员享智能路由。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,6 +28,9 @@
       --accent-light: rgba(99, 102, 241, 0.1);
       --success: #22c55e;
       --success-light: rgba(34, 197, 94, 0.1);
+      --x402: #f59e0b;
+      --x402-light: rgba(245, 158, 11, 0.1);
+      --x402-hover: #fbbf24;
     }
 
     body {
@@ -716,6 +719,172 @@
       color: var(--text-primary);
     }
 
+    /* x402 Section */
+    .x402-section {
+      padding: 100px 0;
+      background: var(--bg-secondary);
+    }
+
+    .x402-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: var(--x402-light);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--x402);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .x402-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+      position: relative;
+    }
+
+    .x402-flow::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--x402), var(--accent));
+      opacity: 0.3;
+    }
+
+    .x402-step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .x402-step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-primary);
+      border: 2px solid var(--x402);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--x402);
+      margin: 0 auto 16px;
+    }
+
+    .x402-step h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .x402-step p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .x402-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .x402-price-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .x402-price-card:hover {
+      border-color: var(--x402);
+      transform: translateY(-4px);
+    }
+
+    .x402-price-card .model-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .x402-price-card .price {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--x402);
+      margin-bottom: 4px;
+    }
+
+    .x402-price-card .unit {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .x402-price-card .chain {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: var(--x402-light);
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--x402);
+      margin-top: 12px;
+    }
+
+    /* Mode Comparison Table */
+    .mode-comparison {
+      padding: 100px 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 48px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    .comparison-table th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .comparison-table th:first-child, .comparison-table td:first-child {
+      text-align: left;
+      color: var(--text-secondary);
+    }
+
+    .comparison-table .highlight-col {
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .comparison-table .check {
+      color: var(--success);
+    }
+
+    .comparison-table .cross {
+      color: var(--text-muted);
+    }
+
     /* Mobile Responsive */
     @media (max-width: 1024px) {
       .features-grid, .byok-grid {
@@ -734,6 +903,14 @@
       }
       
       .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .x402-flow {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .x402-pricing-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
@@ -769,6 +946,22 @@
         gap: 16px;
         text-align: center;
       }
+      
+      .x402-flow {
+        grid-template-columns: 1fr;
+      }
+      
+      .x402-pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-table {
+        font-size: 12px;
+      }
+      
+      .comparison-table th, .comparison-table td {
+        padding: 10px 8px;
+      }
     }
   </style>
 </head>
@@ -785,8 +978,8 @@
         极梦AI
       </a>
       <div class="nav-links">
-        <a href="#byok">BYOK 模式</a>
-        <a href="#features">功能特性</a>
+        <a href="#byok">接入模式</a>
+        <a href="#x402">x402 付费</a>
         <a href="#pricing">定价</a>
         <a href="#faq">常见问题</a>
       </div>
@@ -802,10 +995,10 @@
     <div class="container">
       <div class="hero-badge">
         <span class="check">✓</span>
-        支持 OpenAI / DeepSeek / Anthropic / Gemini
+        支持 OpenAI / DeepSeek / Anthropic / Gemini · x402 按次付费
       </div>
       <h1>用自己的 <span>API Key</span>，<br><span class="highlight">零中间差价</span></h1>
-      <p>极梦AI API Gateway 首创 BYOK 模式。您携带自己的 API Key，我们提供统一的接口、免费额度和智能工具。告别差价时代，按用量付费更透明。</p>
+      <p>极梦AI API Gateway 首创 BYOK 模式 + x402 协议。您携带自己的 API Key 零差价，或用 USDC 在 Base 链上按请求实时结算。告别差价时代，按用量付费更透明。</p>
       <div class="hero-buttons">
         <a href="https://111-2db02f9q2-jimeng999s-projects.vercel.app" class="btn btn-accent" style="padding: 14px 28px; font-size: 16px;">
           免费开始使用 →
@@ -820,8 +1013,8 @@
           <div class="stat-label">BYOK 零差价</div>
         </div>
         <div class="stat-item">
-          <div class="stat-value">5次</div>
-          <div class="stat-label">每日免费体验</div>
+          <div class="stat-value">$0.005</div>
+          <div class="stat-label">x402 最低单价</div>
         </div>
         <div class="stat-item">
           <div class="stat-value">30%</div>
@@ -839,7 +1032,7 @@
   <section class="byok-section" id="byok">
     <div class="container">
       <div class="section-header">
-        <span class="section-label">BYOK 模式</span>
+        <span class="section-label">三种接入模式</span>
         <h2 class="section-title">灵活的选择，更低的成本</h2>
         <p class="section-desc">无论您是否有自己的 API Key，都能找到最优方案</p>
       </div>
@@ -851,16 +1044,17 @@
           <div class="price">¥0 差价</div>
         </div>
         <div class="byok-card">
-          <div class="byok-icon">🎁</div>
-          <h3>免费体验</h3>
-          <p>无需注册 Key，每日 5 次 DeepSeek 免费调用，极低成本试水 AI 能力。</p>
-          <div class="price">¥0 / 天</div>
-        </div>
-        <div class="byok-card">
           <div class="byok-icon">🏢</div>
           <h3>平台 Key 兜底</h3>
           <p>当您没有配置自己的 Key 时，使用平台 Key 调用，仅加价 30% 作为服务费。</p>
           <div class="price">+30% 服务费</div>
+        </div>
+        <div class="byok-card" style="border-color: var(--x402);">
+          <div class="byok-icon">₿</div>
+          <div class="x402-badge">NEW · x402 Protocol</div>
+          <h3>x402 按次付费</h3>
+          <p>无需注册，无需 API Key。用 USDC 稳定币在 Base 链上按请求实时结算，即用即付。</p>
+          <div class="price" style="color: var(--x402);">低至 $0.005/次</div>
         </div>
       </div>
     </div>
@@ -899,13 +1093,135 @@
     </div>
   </section>
 
+  <!-- x402 Section -->
+  <section class="x402-section" id="x402">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label" style="color: var(--x402);">x402 PAYMENT PROTOCOL</span>
+        <h2 class="section-title">HTTP 402 × 区块链 = 按请求付费</h2>
+        <p class="section-desc">基于 x402 开放协议，用 USDC 稳定币在 Base 链上实现 API 按请求实时结算</p>
+      </div>
+      
+      <!-- x402 Flow -->
+      <div class="x402-flow">
+        <div class="x402-step">
+          <div class="x402-step-num">1</div>
+          <h4>请求 API</h4>
+          <p>无 API Key，直接请求 API 端点</p>
+        </div>
+        <div class="x402-step">
+          <div class="x402-step-num">2</div>
+          <h4>收到 402</h4>
+          <p>服务端返回 HTTP 402 + 支付要求</p>
+        </div>
+        <div class="x402-step">
+          <div class="x402-step-num">3</div>
+          <h4>钱包支付</h4>
+          <p>用钱包签名 USDC 支付，重试请求</p>
+        </div>
+        <div class="x402-step">
+          <div class="x402-step-num">4</div>
+          <h4>获取数据</h4>
+          <p>验证通过，返回 200 + AI 响应</p>
+        </div>
+      </div>
+
+      <!-- x402 Pricing Cards -->
+      <div class="x402-pricing-grid">
+        <div class="x402-price-card">
+          <div class="model-name">GPT-4o</div>
+          <div class="price">$0.05</div>
+          <div class="unit">per request</div>
+          <div class="chain">🔷 Base · USDC</div>
+        </div>
+        <div class="x402-price-card">
+          <div class="model-name">GPT-4o-mini</div>
+          <div class="price">$0.01</div>
+          <div class="unit">per request</div>
+          <div class="chain">🔷 Base · USDC</div>
+        </div>
+        <div class="x402-price-card">
+          <div class="model-name">DeepSeek</div>
+          <div class="price">$0.005</div>
+          <div class="unit">per request</div>
+          <div class="chain">🔷 Base · USDC</div>
+        </div>
+        <div class="x402-price-card">
+          <div class="model-name">Claude 3.5 Sonnet</div>
+          <div class="price">$0.03</div>
+          <div class="unit">per request</div>
+          <div class="chain">🔷 Base · USDC</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mode Comparison Section -->
+  <section class="mode-comparison" id="compare">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">模式对比</span>
+        <h2 class="section-title">选择最适合你的方式</h2>
+        <p class="section-desc">三种模式各有优势，灵活组合更省钱</p>
+      </div>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>BYOK 自带 Key</th>
+            <th>平台 Key</th>
+            <th class="highlight-col">x402 按次付</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>价格</td>
+            <td>官方原价，零差价</td>
+            <td>+30% 服务费</td>
+            <td class="highlight-col">按请求固定价</td>
+          </tr>
+          <tr>
+            <td>注册要求</td>
+            <td><span class="check">✓</span> 需注册</td>
+            <td><span class="check">✓</span> 需注册</td>
+            <td class="highlight-col"><span class="check">✓</span> 无需注册</td>
+          </tr>
+          <tr>
+            <td>自有 API Key</td>
+            <td><span class="check">✓</span> 必须自带</td>
+            <td><span class="cross">✗</span> 使用平台</td>
+            <td class="highlight-col"><span class="cross">✗</span> 使用平台</td>
+          </tr>
+          <tr>
+            <td>支付方式</td>
+            <td>API Key 计费</td>
+            <td>API Key 计费</td>
+            <td class="highlight-col">USDC (Base 链)</td>
+          </tr>
+          <tr>
+            <td>适用场景</td>
+            <td>长期高频使用</td>
+            <td>偶尔使用</td>
+            <td class="highlight-col">临时/测试/Web3</td>
+          </tr>
+          <tr>
+            <td>免费体验</td>
+            <td>每日 5 次 DeepSeek</td>
+            <td>每日 5 次 DeepSeek</td>
+            <td class="highlight-col"><span class="cross">✗</span> 按次付费</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- Pricing Section -->
   <section class="pricing" id="pricing">
     <div class="container">
       <div class="section-header">
         <span class="section-label">简单定价</span>
         <h2 class="section-title">按需选择，无隐藏费用</h2>
-        <p class="section-desc">BYOK 模式：用自己的 Key 零差价，订阅解锁高级功能</p>
+        <p class="section-desc">BYOK 模式：用自己的 Key 零差价 · x402：按次付 USDC · 订阅解锁高级功能</p>
       </div>
       <div class="pricing-grid">
         <div class="pricing-card">
@@ -957,20 +1273,20 @@
       <div class="api-content">
         <div class="api-info">
           <span class="section-label">开发者友好</span>
-          <h2>设置 BYOK Key，三步搞定</h2>
-          <p>简单三步，开始使用极梦AI BYOK 模式。</p>
+          <h2>多种方式接入，灵活调用</h2>
+          <p>支持 BYOK Key 模式和 x402 按次付费，选择最适合你的方式。</p>
           <div class="api-features">
             <div class="api-feature-item">
               <span class="check">1</span>
-              <span>注册账户，获取您的 API Key</span>
+              <span>BYOK: 设置您的 Key，零差价调用</span>
             </div>
             <div class="api-feature-item">
               <span class="check">2</span>
-              <span>设置您的 OpenAI/DeepSeek 等 Key</span>
+              <span>x402: 无需注册，用 USDC 按次付费</span>
             </div>
             <div class="api-feature-item">
               <span class="check">3</span>
-              <span>开始调用，零差价使用 AI 能力</span>
+              <span>统一 API 格式，多模型无缝切换</span>
             </div>
           </div>
         </div>
@@ -999,9 +1315,14 @@ curl https://api.jimeng.ai/v1/chat/completions \
     "messages": [{"role": "user", "content": "Hello!"}]
   }'</span>
 
-<span class="comment"># 3. 查看已设置的 Keys（脱敏显示）</span>
-curl https://api.jimeng.ai/v1/user/api-keys \
-  <span class="property">-H</span> <span class="string">"Authorization: Bearer $JIMENG_KEY"</span>
+<span class="comment"># 3. x402 按次付费（无需注册！）</span>
+curl https://api.jimeng.ai/v1/chat/completions \
+  <span class="property">-H</span> <span class="string">"PAYMENT-SIGNATURE: $SIGNED_PAYMENT"</span> \
+  <span class="property">-H</span> <span class="string">"X-Model: gpt-4o-mini"</span> \
+  <span class="property">-d</span> <span class="string">'{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</span>
           </div>
         </div>
       </div>
@@ -1061,6 +1382,24 @@ curl https://api.jimeng.ai/v1/user/api-keys \
             <p>BYOK 模式下，您只需支付模型提供商的费用（OpenAI/DeepSeek 等官方价格）。如果您使用平台 Key，我们会加收 30% 作为服务费。订阅费用与 API 调用费用分开计算。</p>
           </div>
         </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            什么是 x402 按次付费？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>x402 是基于 HTTP 402 状态码的开放支付协议。无需注册账户或配置 API Key，直接请求 API → 收到 402 支付要求 → 用加密钱包支付 USDC → 获取 AI 响应。支付在 Base 链上实时结算，即用即付，适合临时调用和 Web3 场景。<a href="https://x402.org" style="color: var(--x402);" target="_blank">了解更多 →</a></p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">
+            x402 模式安全吗？如何验证支付？
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>x402 使用 Coinbase 官方 Facilitator 服务验证链上支付。每次请求都会实时验证 USDC 转账是否到账，确保支付真实有效。您的钱包私钥永远不会离开您的设备，我们只接收签名后的支付凭证。</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1083,9 +1422,9 @@ curl https://api.jimeng.ai/v1/user/api-keys \
         <div class="footer-links">
           <h4>产品</h4>
           <ul>
-            <li><a href="#byok">BYOK 模式</a></li>
+            <li><a href="#byok">接入模式</a></li>
+            <li><a href="#x402">x402 按次付费</a></li>
             <li><a href="#pricing">定价</a></li>
-            <li><a href="#api">API 文档</a></li>
             <li><a href="#faq">常见问题</a></li>
           </ul>
         </div>
@@ -1093,7 +1432,7 @@ curl https://api.jimeng.ai/v1/user/api-keys \
           <h4>资源</h4>
           <ul>
             <li><a href="#">开发者文档</a></li>
-            <li><a href="#">SDK 下载</a></li>
+            <li><a href="https://x402.org" target="_blank">x402 协议</a></li>
             <li><a href="#">API 状态</a></li>
             <li><a href="#">最佳实践</a></li>
           </ul>
