@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     jwt_algorithm: str = Field(default="HS256", env="JWT_ALGORITHM")
     jwt_expire_minutes: int = Field(default=1440, env="JWT_EXPIRE_MINUTES")
     
+    # x402 支付协议配置
+    x402_enabled: bool = Field(default=False, env="X402_ENABLED")
+    x402_wallet_address: str = Field(default="0x0000000000000000000000000000000000000000", env="X402_WALLET_ADDRESS")
+    x402_network: str = Field(default="base-mainnet", env="X402_NETWORK")
+
     # 数据目录
     data_dir: Path = Field(default=Path("./data"), env="DATA_DIR")
     
@@ -165,6 +170,53 @@ class ModelConfig:
     
     # 免费层可用模型
     FREE_TIER_MODELS = ["gpt-4o-mini"]
+
+    # x402 按请求付费定价 (USDC 6 decimals)
+    X402_PRICING = {
+        "gpt-4o": {
+            "amount": "50000",       # $0.05/request
+            "usd": "$0.05",
+            "description": "GPT-4o per request"
+        },
+        "gpt-4o-mini": {
+            "amount": "10000",       # $0.01/request
+            "usd": "$0.01",
+            "description": "GPT-4o-mini per request"
+        },
+        "deepseek-chat": {
+            "amount": "5000",        # $0.005/request
+            "usd": "$0.005",
+            "description": "DeepSeek Chat per request"
+        },
+        "deepseek-coder": {
+            "amount": "5000",
+            "usd": "$0.005",
+            "description": "DeepSeek Coder per request"
+        },
+        "claude-3-5-sonnet-20241022": {
+            "amount": "30000",       # $0.03/request
+            "usd": "$0.03",
+            "description": "Claude 3.5 Sonnet per request"
+        },
+        "claude-3-haiku-20240307": {
+            "amount": "10000",
+            "usd": "$0.01",
+            "description": "Claude 3 Haiku per request"
+        },
+        "gemini-1.5-flash": {
+            "amount": "5000",
+            "usd": "$0.005",
+            "description": "Gemini 1.5 Flash per request"
+        },
+        "gemini-1.5-pro": {
+            "amount": "20000",
+            "usd": "$0.02",
+            "description": "Gemini 1.5 Pro per request"
+        }
+    }
+
+    # USDC 合约地址 (Base mainnet)
+    USDC_BASE_CONTRACT = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
 
 
 # ==================== 套餐配置 ====================
